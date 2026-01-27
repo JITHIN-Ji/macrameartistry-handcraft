@@ -132,9 +132,77 @@ const Cart = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+                      className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
                     >
-                      <div className="flex gap-6">
+                      {/* Mobile Layout (below md breakpoint) */}
+                      <div className="md:hidden">
+                        {/* Image and Header */}
+                        <div className="flex gap-4 mb-4">
+                          <img
+                            src={productData?.image}
+                            alt={productData?.name}
+                            className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                            loading="lazy"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex-1 min-w-0 pr-2">
+                                <h3 className="text-lg font-bold text-gray-900 truncate">{productData?.name}</h3>
+                                <p className="text-sm text-gray-600">Size: {productData?.size}</p>
+                              </div>
+                              <button
+                                onClick={() => handleRemoveItem(productId)}
+                                className="text-red-500 hover:text-red-700 transition-colors flex-shrink-0"
+                              >
+                                <Trash2 className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Quantity and Price */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1.5">
+                            <button
+                              onClick={() => handleUpdateQuantity(productId, -1)}
+                              className="w-8 h-8 flex items-center justify-center bg-white rounded hover:bg-gray-200 transition-colors"
+                            >
+                              <Minus className="w-4 h-4" />
+                            </button>
+                            <span className="w-8 text-center font-semibold text-sm">{item.quantity}</span>
+                            <button
+                              onClick={() => handleUpdateQuantity(productId, 1)}
+                              className="w-8 h-8 flex items-center justify-center bg-white rounded hover:bg-gray-200 transition-colors"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <p className="text-xl font-bold text-gray-900">
+                            ${((item.price || productData?.price || 0) * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
+
+                        {/* Buy Now Button */}
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            navigate('/checkout', {
+                              state: {
+                                items: [item],
+                                type: 'single'
+                              }
+                            });
+                          }}
+                          className="w-full bg-cyan-500 text-white py-3 rounded-lg font-semibold hover:bg-cyan-600 transition-colors duration-300 flex items-center justify-center gap-2"
+                        >
+                          <ShoppingBag className="w-5 h-5" />
+                          Buy This Now
+                        </motion.button>
+                      </div>
+
+                      {/* Desktop Layout (md breakpoint and above) */}
+                      <div className="hidden md:flex gap-6">
                         <img
                           src={productData?.image}
                           alt={productData?.name}
@@ -208,9 +276,9 @@ const Cart = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-8 sticky top-24"
+                className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-6 md:p-8 sticky top-24"
               >
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
                 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-gray-700">
