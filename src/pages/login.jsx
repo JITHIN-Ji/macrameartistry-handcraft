@@ -271,9 +271,15 @@ const Auth = () => {
                             />
                             <span className="ml-2 text-sm text-gray-600">Remember me</span>
                           </label>
-                          <a href="#" className="text-sm text-cyan-600 hover:text-cyan-700 font-medium">
+                          <button
+                            type="button"
+                            className="text-sm text-cyan-600 hover:text-cyan-700 font-medium"
+                            onClick={() => {
+                              // Placeholder: navigate to reset page or open modal
+                            }}
+                          >
                             Forgot password?
-                          </a>
+                          </button>
                         </div>
 
                         <motion.button
@@ -433,13 +439,19 @@ const Auth = () => {
                           />
                           <span className="ml-2 text-sm text-gray-600">
                             I agree to the{' '}
-                            <a href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                            <button
+                              type="button"
+                              className="text-cyan-600 hover:text-cyan-700 font-medium underline"
+                            >
                               Terms
-                            </a>
+                            </button>
                             {' '}and{' '}
-                            <a href="#" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                            <button
+                              type="button"
+                              className="text-cyan-600 hover:text-cyan-700 font-medium underline"
+                            >
                               Privacy Policy
-                            </a>
+                            </button>
                           </span>
                         </div>
 

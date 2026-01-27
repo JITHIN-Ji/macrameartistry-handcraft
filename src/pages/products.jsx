@@ -44,20 +44,20 @@ const Portfolio = () => {
     }, 3000);
   };
 
-  const handleKeyDown = (e) => {
-    if (!selectedTattoo) return;
-    
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     // Scroll to top when page loads
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    const onKeyDown = (e) => {
+      if (!selectedTattoo) return;
+      if (e.key === 'Escape') {
+        setSelectedTattoo(null);
+        document.body.style.overflow = 'unset';
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   }, [selectedTattoo]);
 
   // Fetch products from backend (uses REACT_APP_API_URL or same-origin)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -14,7 +14,6 @@ import {
   CheckCircle,
   AlertCircle,
   ArrowLeft,
-  ShoppingBag,
   Save
 } from 'lucide-react';
 
@@ -33,7 +32,6 @@ const Checkout = () => {
 
   // Get items from navigation state
   const checkoutItems = location.state?.items || [];
-  const checkoutType = location.state?.type || 'all'; // 'all' or 'single'
 
   const [formData, setFormData] = useState({
     // Shipping Information
@@ -70,30 +68,7 @@ const Checkout = () => {
 
   const [errors, setErrors] = useState({});
 
-  // Fetch user shipping information on component mount
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    
-    // Redirect if no items
-    if (checkoutItems.length === 0) {
-      navigate('/cart');
-    }
-
-    // Pre-fill user data from auth and fetch shipping info
-    if (user && token) {
-      setFormData(prev => ({
-        ...prev,
-        firstName: user.first_name || '',
-        lastName: user.last_name || '',
-        email: user.email || ''
-      }));
-
-      // Fetch shipping address
-      fetchShippingInfo();
-    }
-  }, [checkoutItems, navigate, user, token]);
-
-  const fetchShippingInfo = async () => {
+  const fetchShippingInfo = useCallback(async () => {
     try {
       setShippingLoading(true);
       const response = await axios.get(`${API_URL}/users/shipping`, {
@@ -119,7 +94,30 @@ const Checkout = () => {
     } finally {
       setShippingLoading(false);
     }
-  };
+  }, [API_URL, token]);
+
+  // Fetch user shipping information on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Redirect if no items
+    if (checkoutItems.length === 0) {
+      navigate('/cart');
+    }
+
+    // Pre-fill user data from auth and fetch shipping info
+    if (user && token) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        email: user.email || ''
+      }));
+
+      // Fetch shipping address
+      fetchShippingInfo();
+    }
+  }, [checkoutItems, fetchShippingInfo, navigate, user, token]);
 
   const saveShippingInfo = async (e) => {
     e.preventDefault();
@@ -131,7 +129,7 @@ const Checkout = () => {
 
     try {
       setShippingLoading(true);
-      const response = await axios.put(
+      await axios.put(
         `${API_URL}/users/shipping`,
         {
           phone: formData.phone,
