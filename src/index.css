@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-white text-gray-900 dark:bg-dark-900 dark:text-white transition-colors duration-200;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-900;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-900;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-dark-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-dark-700 hover:border-primary-500 transition-all duration-300;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-dark-700/50;
+  }
+  
+  /* Ensure navbar stays above all content */
+  nav {
+    isolation: isolate;
+    will-change: transform;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Ensure navbar container has proper positioning */
+  nav > div {
+    position: relative !important;
+  }
+  
+  nav > div > div {
+    position: relative !important;
+  }
+  
+  /* Prevent GIF background from affecting navbar */
+  nav * {
+    isolation: isolate;
+    position: relative;
+  }
+  
+  /* Ensure buttons stay visible */
+  nav button {
+    position: relative !important;
+    z-index: 10000 !important;
+    background: inherit !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Prevent GIF interference */
+  nav {
+    pointer-events: auto !important;
+  }
+  
+  nav * {
+    pointer-events: auto !important;
+  }
+  
+  /* Mobile and tablet fixes (up to 1024px) */
+  @media (max-width: 1024px) {
+    nav {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+    
+    nav button {
+      min-width: 40px !important;
+      min-height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: inherit !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  }
+  
+  /* Ensure theme toggle button is always visible */
+  nav button[aria-label="Toggle theme"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    right: 1rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10002 !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  /* Mobile theme toggle positioning */
+  @media (max-width: 1023px) {
+    nav button[aria-label="Toggle theme"] {
+      right: 4rem !important;
+    }
+  }
+  
+  /* Desktop fixes (1024px and above) */
+  @media (min-width: 1024px) {
+    /* Hide mobile menu button on desktop - be more specific */
+    nav button[aria-label="Toggle menu"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+    }
+  }
+  
+  /* iPhone 14 Pro Max specific fixes */
+  @media (max-width: 430px) {
+    nav {
+      padding-left: 0.75rem !important;
+      padding-right: 0.75rem !important;
+    }
+    
+    nav button {
+      min-width: 36px !important;
+      min-height: 36px !important;
+    }
+    
+    /* Portfolio filters mobile optimization */
+    .portfolio-filters {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+    
+    .portfolio-filters input,
+    .portfolio-filters select {
+      font-size: 14px !important;
+      padding: 0.75rem !important;
+    }
+  }
+  
+  /* Tablet-specific fixes (iPad Air, etc.) */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    /* Adjust navigation positioning to prevent overlap */
+    nav > div > div > div:nth-child(2) {
+      left: 60% !important;
+      transform: translateX(-50%) translateY(-50%) !important;
+    }
+    
+    /* Ensure buttons stay on the right */
+    nav > div > div > div:nth-child(3) {
+      right: 1rem !important;
+    }
+    
+    /* Reduce logo size and adjust position on tablets */
+    nav > div > div > div:first-child {
+      left: 1rem !important;
+    }
+    
+    nav a:first-child {
+      font-size: 1.25rem !important;
+    }
+    
+    /* Reduce navigation link spacing */
+    nav > div > div > div:nth-child(2) a {
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+    }
+    
+    /* Portfolio filters 2x2 grid optimization for iPad Air */
+    .portfolio-filters .grid {
+      gap: 1rem !important;
+    }
+    
+    .portfolio-filters input,
+    .portfolio-filters select {
+      padding: 0.875rem !important;
+      font-size: 15px !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
