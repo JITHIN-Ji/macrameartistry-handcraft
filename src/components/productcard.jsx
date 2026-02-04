@@ -10,10 +10,9 @@ const ProductCard = ({ tattoo, onClick }) => {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
-      className="group relative overflow-hidden rounded-xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer"
+      className="group relative overflow-hidden rounded-xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 hover:border-primary-500 transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onClick && onClick(tattoo)}
     >
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden">
