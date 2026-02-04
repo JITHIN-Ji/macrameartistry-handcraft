@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-const WA_NUMBER = process.env.REACT_APP_WHATSAPP_NUMBER || '';
-
 const ProductCard = ({ tattoo, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -26,21 +24,7 @@ const ProductCard = ({ tattoo, onClick }) => {
           loading="lazy"
         />
         
-        {/* Overlay with View Details Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          className="absolute inset-0 bg-black/40 flex items-center justify-center"
-        >
-          <motion.button
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: isHovered ? 0 : 20, opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
-          >
-            View Details
-          </motion.button>
-        </motion.div>
+
       </div>
 
       {/* Content */}
@@ -65,7 +49,8 @@ const ProductCard = ({ tattoo, onClick }) => {
             const productUrl = `${origin}/products`;
             const text = `Hi, I'm interested in \"${tattoo.title}\". ${tattoo.description || ''} Price: ${tattoo.price || ''} ${productUrl}`;
             const encoded = encodeURIComponent(text);
-            const normalized = (WA_NUMBER || '').replace(/[^0-9]/g, '');
+            const waNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '';
+            const normalized = (waNumber || '').replace(/[^0-9]/g, '');
             const link = normalized ? `https://wa.me/${normalized}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
 
             return (
