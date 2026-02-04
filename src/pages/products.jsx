@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingCart, CheckCircle } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import TattooCard from '../components/TattooCard';
+import { X } from 'lucide-react';
+import ProductCard from '../components/productcard';
 
 // Data will be fetched from backend
 
 const Portfolio = () => {
   const [selectedTattoo, setSelectedTattoo] = useState(null);
-  const [showNotification, setShowNotification] = useState(false);
-  const [addedProduct, setAddedProduct] = useState(null);
-  const { addToCart } = useCart();
 
   const openModal = (tattoo) => {
     setSelectedTattoo(tattoo);
@@ -20,28 +16,6 @@ const Portfolio = () => {
   const closeModal = () => {
     setSelectedTattoo(null);
     document.body.style.overflow = 'unset';
-  };
-
-  const handleAddToCart = (e, tattoo) => {
-    e.stopPropagation();
-    
-    // Prepare product data for cart
-    const productData = {
-      id: tattoo.id,
-      name: tattoo.title,
-      price: tattoo.price,
-      image: tattoo.image,
-      size: 'Standard' // You can make this dynamic if needed
-    };
-    
-    addToCart(productData);
-    setAddedProduct(tattoo.title);
-    setShowNotification(true);
-    
-    // Hide notification after 3 seconds
-    setTimeout(() => {
-      setShowNotification(false);
-    }, 3000);
   };
 
   useEffect(() => {
@@ -106,23 +80,7 @@ const Portfolio = () => {
       transition={{ duration: 0.5 }}
       className="pt-16 min-h-screen bg-white dark:bg-dark-900"
     >
-      {/* Success Notification */}
-      <AnimatePresence>
-        {showNotification && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3"
-          >
-            <CheckCircle className="w-6 h-6" />
-            <div>
-              <p className="font-semibold">Added to Cart!</p>
-              <p className="text-sm">{addedProduct}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* (Cart/notification removed) */}
 
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-gray-100 to-white dark:from-dark-800 dark:to-dark-900">
@@ -173,7 +131,7 @@ const Portfolio = () => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.03 }}
               >
-                <TattooCard
+                <ProductCard
                   tattoo={{
                     id: p.id,
                     title: p.name,
@@ -185,15 +143,7 @@ const Portfolio = () => {
                 />
 
                 <div className="p-6">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={(e) => handleAddToCart(e, { id: p.id, title: p.name, price: p.price, image: p.image_url || p.image })}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    <span>Add to Cart</span>
-                  </motion.button>
+                  {/* Cart removed - products are displayed only */}
                 </div>
               </motion.div>
             ))}

@@ -1,24 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 // Components
 import HeroSection from '../components/HeroSection';
-import TattooCard from '../components/TattooCard';
+import ProductCard from '../components/productcard';
 
 // Data
-import { tattoos } from '../data/tattoos';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const Home = () => {
-  const [selectedStyle, setSelectedStyle] = useState('All');
   const [email, setEmail] = useState('');
-
-  const tattooStyles = ['All', 'Blackwork', 'Realism', 'Tribal', 'Watercolor', 'Minimal'];
+  const [featured, setFeatured] = useState([]);
   
-  const filteredTattoos = selectedStyle === 'All' 
-    ? tattoos.slice(0, 6) 
-    : tattoos.filter(tattoo => tattoo.style === selectedStyle).slice(0, 6);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch(`${API_BASE}/products`)
+      .then(res => res.ok ? res.json() : Promise.reject(res.status))
+      .then(data => {
+        if (!mounted) return;
+        setFeatured((data.products || []).slice(0, 6));
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setFeatured([]);
+      });
+    return () => { mounted = false };
+  }, []);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -56,8 +66,8 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
           >
-            {filteredTattoos.map((tattoo) => (
-              <TattooCard key={tattoo.id} tattoo={tattoo} />
+            {featured.map((p) => (
+              <ProductCard key={p.id} tattoo={{ id: p.id, title: p.name, description: p.description, price: p.price, image: p.image_url || p.image }} />
             ))}
           </motion.div>
 
