@@ -67,7 +67,7 @@ const Home = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
           >
             {featured.map((p) => (
-              <ProductCard key={p.id} tattoo={{ id: p.id, title: p.name, description: p.description, price: p.price, image: p.image_url || p.image }} />
+              <ProductCard key={p.id} tattoo={{ id: p.id, title: p.name, description: p.description, price: p.price, image_path: p.image_path, image_paths: p.image_paths, image: p.image_url || p.image }} />
             ))}
           </motion.div>
 

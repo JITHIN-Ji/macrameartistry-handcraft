@@ -1,44 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import ProductCard from '../components/productcard';
 
-// Data will be fetched from backend
-
 const Portfolio = () => {
-  const [selectedTattoo, setSelectedTattoo] = useState(null);
-
-  const openModal = (tattoo) => {
-    setSelectedTattoo(tattoo);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeModal = () => {
-    setSelectedTattoo(null);
-    document.body.style.overflow = 'unset';
-  };
-
-  useEffect(() => {
-    // Scroll to top when page loads
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    const onKeyDown = (e) => {
-      if (!selectedTattoo) return;
-      if (e.key === 'Escape') {
-        setSelectedTattoo(null);
-        document.body.style.overflow = 'unset';
-      }
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [selectedTattoo]);
-
-  // Fetch products from backend (uses REACT_APP_API_URL or same-origin)
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    // Scroll to top when page loads
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Fetch products from backend (uses REACT_APP_API_URL or same-origin)
   useEffect(() => {
     let mounted = true;
     const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -137,55 +111,16 @@ const Portfolio = () => {
                     title: p.name,
                     description: p.description,
                     price: p.price,
-                    image: p.image_url || p.image
+                    image_path: p.image_path,
+                    image_paths: p.image_paths,
+                    image: p.image_url || p.image || (Array.isArray(p.images) && p.images[0])
                   }}
-                  onClick={openModal}
                 />
-
-                <div className="p-6">
-                  {/* Cart removed - products are displayed only */}
-                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </motion.section>
-
-      {/* Image Modal */}
-      <AnimatePresence>
-        {selectedTattoo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
-            onClick={closeModal}
-          >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="relative max-w-2xl w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close Button */}
-              <button
-                onClick={closeModal}
-                className="absolute -top-12 right-0 p-2 bg-white/80 dark:bg-dark-800/80 text-gray-900 dark:text-white rounded-full hover:bg-gray-200 dark:hover:bg-dark-700 transition-colors duration-200"
-              >
-                <X className="h-6 w-6" />
-              </button>
-
-              {/* Image */}
-              <img
-                src={selectedTattoo.image}
-                alt={selectedTattoo.title}
-                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 };

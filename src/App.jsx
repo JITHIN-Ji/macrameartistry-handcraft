@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import About from './pages/about';
 import Products from './pages/products';
+import ProductDetails from './pages/ProductDetails';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 
@@ -42,6 +43,12 @@ function App() {
             <Route path="/products" element={
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
                 <Products />
+              </motion.div>
+            } />
+
+            <Route path="/products/:productId" element={
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                <ProductDetails />
               </motion.div>
             } />
 

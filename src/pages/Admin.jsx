@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { uploadImagesToSupabase, getImagePublicUrl } from '../utils/supabaseStorage';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const ADMIN_USER = process.env.REACT_APP_ADMIN_USER || 'macrameartistry@gmail.com';
@@ -15,11 +16,14 @@ const Admin = () => {
     description: '',
     price: '',
     category: '',
-    image_url: '',
+    imageFiles: [],
+    imagePaths: [],
     stock: 0,
     material: '',
     featured: false,
   });
+
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('isAdmin');
@@ -55,11 +59,39 @@ const Admin = () => {
     setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
+  const handleImageFileChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    setForm(prev => ({ ...prev, imageFiles: files }));
+  };
+
+  const removeImageFile = (index) => {
+    setForm(prev => ({
+      ...prev,
+      imageFiles: prev.imageFiles.filter((_, i) => i !== index),
+      imagePaths: prev.imagePaths.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
 
+    // Validate image files
+    if (form.imageFiles.length === 0) {
+      setMessage('Please upload at least one image');
+      return;
+    }
+
     try {
+      setUploading(true);
+      setMessage('Uploading images...');
+
+      // Upload images to Supabase storage
+      const uploadedPaths = await uploadImagesToSupabase(form.imageFiles, ADMIN_USER, ADMIN_PASS);
+
+      setMessage('Creating product...');
+
+      // Create product with image paths
       const res = await fetch(`${API_BASE}/products`, {
         method: 'POST',
         headers: {
@@ -72,7 +104,8 @@ const Admin = () => {
           description: form.description,
           price: parseFloat(form.price) || 0,
           category: form.category,
-          image_url: form.image_url,
+          image_path: uploadedPaths[0], // First image as main
+          image_paths: uploadedPaths,   // All images as array
           stock: Number(form.stock) || 0,
           material: form.material,
           featured: !!form.featured,
@@ -83,9 +116,11 @@ const Admin = () => {
       if (!res.ok) throw new Error(data.message || 'Failed');
       console.log('🆕 New product added:', data.product);
       setMessage(data.product && data.product.name ? `Product "${data.product.name}" created successfully` : 'Product created successfully');
-      setForm({ name: '', description: '', price: '', category: '', image_url: '', stock: 0, material: '', featured: false });
+      setForm({ name: '', description: '', price: '', category: '', imageFiles: [], imagePaths: [], stock: 0, material: '', featured: false });
     } catch (err) {
       setMessage(err.message || 'Error creating product');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -125,13 +160,49 @@ const Admin = () => {
           <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full border px-3 py-2 rounded" rows={4} required />
           <input name="price" value={form.price} onChange={handleChange} placeholder="Price" type="number" step="0.01" className="w-full border px-3 py-2 rounded" required />
           <input name="category" value={form.category} onChange={handleChange} placeholder="Category" className="w-full border px-3 py-2 rounded" />
-          <input name="image_url" value={form.image_url} onChange={handleChange} placeholder="Image URL" className="w-full border px-3 py-2 rounded" required />
+          
+          {/* Multiple Images */}
+          <div className="space-y-3">
+            <label className="block font-semibold text-gray-700">Product Images (Upload Files)</label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageFileChange}
+              className="w-full border px-3 py-2 rounded"
+              disabled={uploading}
+            />
+            {form.imageFiles.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">{form.imageFiles.length} file(s) selected:</p>
+                {form.imageFiles.map((file, index) => (
+                  <div key={index} className="flex justify-between items-center bg-gray-100 p-2 rounded">
+                    <span className="text-sm">{file.name} ({(file.size / 1024).toFixed(2)} KB)</span>
+                    <button
+                      type="button"
+                      onClick={() => removeImageFile(index)}
+                      disabled={uploading}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <input name="stock" value={form.stock} onChange={handleChange} placeholder="Stock" type="number" className="w-full border px-3 py-2 rounded" />
           <input name="material" value={form.material} onChange={handleChange} placeholder="Material" className="w-full border px-3 py-2 rounded" />
           <label className="flex items-center gap-2"><input name="featured" checked={form.featured} onChange={handleChange} type="checkbox" /> Featured</label>
 
           <div className="flex gap-3">
-            <button className="bg-green-600 text-white px-4 py-2 rounded">Create Product</button>
+            <button 
+              disabled={uploading}
+              className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploading ? 'Creating Product...' : 'Create Product'}
+            </button>
             <a href="/" className="px-4 py-2 border rounded">View Store</a>
           </div>
         </form>
